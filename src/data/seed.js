@@ -1,3 +1,5 @@
+import { OFFICIAL_SCHOLARSHIPS } from './officialScholarships'
+
 export const seedState = {
   user: {
     name: 'Anuj Gupta',
@@ -26,7 +28,7 @@ export const seedState = {
   },
   bills: [],
   splitBills: [],
-  scholarships: [],
+  scholarships: OFFICIAL_SCHOLARSHIPS,
   goal: {
     target: 0,
     current: 0,

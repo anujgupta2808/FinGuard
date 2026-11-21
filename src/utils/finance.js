@@ -208,12 +208,51 @@ export const getSplitBillSummary = (splitBills = [], userName = 'Anuj Gupta') =>
 }
 
 export const scholarshipScore = (s, user) => {
-  let score = 40
-  if (s.field === 'Any field' || (user?.major && /stem|computer|engineering|science|math|tech/i.test(user.major) && s.field === 'STEM') || (/art|design|creative/i.test(user?.major) && s.field === 'Arts')) score += 25
-  if (s.level === 'Any level' || s.level?.includes(user?.year) || s.level === 'Undergraduate') score += 15
-  score += (user?.gpa || 0) >= (s.minGpa || 0) ? 15 : -20
-  if (s.need && user?.needBased) score += 10
-  return Math.max(0, Math.min(99, score))
+  let score = 50
+  const major = (user?.major || 'Computer Science').toLowerCase()
+  const field = (s.field || '').toLowerCase()
+
+  // Academic field matching
+  if (field.includes('all') || field.includes('any')) {
+    score += 20
+  } else if (
+    /computer|tech|engineering|stem|science|it/i.test(major) &&
+    /computer|tech|engineering|stem|science|software/i.test(field)
+  ) {
+    score += 25
+  } else if (
+    /business|commerce|finance|econ/i.test(major) &&
+    /commerce|business|management/i.test(field)
+  ) {
+    score += 25
+  } else if (
+    /art|design|humanities/i.test(major) &&
+    /art|design|humanities/i.test(field)
+  ) {
+    score += 25
+  } else {
+    score += 10
+  }
+
+  // Academic level / year compatibility
+  const level = (s.level || '').toLowerCase()
+  const year = (user?.year || 'Junior').toLowerCase()
+  if (
+    level.includes('all') ||
+    level.includes('any') ||
+    level.includes('undergraduate') ||
+    level.includes('ug') ||
+    level.includes(year)
+  ) {
+    score += 15
+  }
+
+  // Needs or Category affinity
+  if (s.need || (s.category && /means|need|grant/i.test(s.category)) || user?.needBased) {
+    score += 10
+  }
+
+  return Math.max(50, Math.min(98, score))
 }
 
 export const weeklySavings = (goal) => {

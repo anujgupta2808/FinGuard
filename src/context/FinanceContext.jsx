@@ -250,6 +250,25 @@ export function FinanceProvider({ children }) {
       scholarships: s.scholarships.map(x => x.id === id ? { ...x, status } : x),
       habit: { ...s.habit, xp: s.habit.xp + (status === 'Submitted' ? 25 : 5) },
     })),
+    syncScholarships: (incomingList) => setState(s => {
+      const existingMap = new Map((s.scholarships || []).map(x => [x.id, x]))
+      const merged = incomingList.map(item => {
+        const existing = existingMap.get(item.id)
+        if (existing) {
+          return { ...item, status: existing.status }
+        }
+        return item
+      })
+      existingMap.forEach((val, id) => {
+        if (!incomingList.some(item => item.id === id)) {
+          merged.push(val)
+        }
+      })
+      return {
+        ...s,
+        scholarships: merged,
+      }
+    }),
 
     // Habits
     checkin: () => setState(s => {
