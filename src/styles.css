@@ -4537,8 +4537,21 @@ body {
 .auth-mobile-brand {
   display: none;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 10px;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.22);
+  width: fit-content;
+}
+
+.auth-mobile-brand .auth-mobile-name {
+  color: #ffffff !important;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
 .auth-title {
@@ -4700,7 +4713,7 @@ body {
   }
 
   .auth-mobile-brand {
-    display: flex;
+    display: inline-flex;
   }
 
   .auth-form-pane {
@@ -5090,9 +5103,9 @@ body {
    FinGuard Brand Logo Enhancements
    ========================================================================== */
 .brand-logo-img {
-  height: 44px;
+  height: 38px;
   width: auto;
-  max-width: 140px;
+  max-width: 44px;
   object-fit: contain;
   flex-shrink: 0;
   display: block;
@@ -5109,9 +5122,9 @@ body {
 }
 
 .auth-hero-logo {
-  height: 60px;
+  height: 54px;
   width: auto;
-  max-width: 170px;
+  max-width: 68px;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
   display: block;
