@@ -4537,12 +4537,13 @@ body {
 .auth-mobile-brand {
   display: none;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   background: linear-gradient(135deg, #1d4ed8, #2563eb);
   color: #ffffff;
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: var(--radius-md);
-  margin-bottom: 20px;
+  margin: 0 auto 20px auto;
   box-shadow: 0 4px 14px rgba(29, 78, 216, 0.22);
   width: fit-content;
 }
@@ -4714,6 +4715,11 @@ body {
 
   .auth-mobile-brand {
     display: inline-flex;
+    margin: 0 auto 20px auto;
+  }
+
+  .auth-form-header {
+    text-align: center;
   }
 
   .auth-form-pane {
