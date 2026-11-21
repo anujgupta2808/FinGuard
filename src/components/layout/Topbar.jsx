@@ -41,7 +41,7 @@ export function Topbar({ onOpenMobileMenu, onQuickAdd, onQuickSplit, notify }) {
       <div className="topbar-right">
         <div className="currency-pill" title={`Active Currency: ${cur.label}`}>
           <span className="currency-symbol">{cur.symbol}</span>
-          <span className="currency-code">{cur.code}</span>
+          <span className="currency-code hidden-xs">{cur.code}</span>
         </div>
 
         <button
@@ -84,7 +84,7 @@ export function Topbar({ onOpenMobileMenu, onQuickAdd, onQuickSplit, notify }) {
           </Button>
         </div>
 
-        <div className="user-avatar-pill" title={user?.name}>
+        <div className="user-avatar-pill hidden-xs" title={user?.name}>
           <span className="user-avatar-text">{initials}</span>
         </div>
       </div>
