@@ -280,7 +280,9 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-light);
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.18);
 }
 
 .brand-logo {
@@ -293,7 +295,7 @@ a {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-md);
-  background: var(--primary);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   display: grid;
   place-items: center;
@@ -308,20 +310,25 @@ a {
   font-size: 16px;
   font-weight: 800;
   letter-spacing: -0.4px;
-  color: var(--text-main);
+  color: #ffffff;
 }
 
 .brand-subtitle {
   font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
+  color: #dbeafe;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .sidebar-close-btn {
   display: none;
   padding: 8px;
   border-radius: var(--radius-sm);
-  color: var(--text-muted);
+  color: #ffffff;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .student-badge-card {
@@ -5089,6 +5096,7 @@ body {
   object-fit: contain;
   flex-shrink: 0;
   display: block;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
 }
 
 .topbar-logo-img {
