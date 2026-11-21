@@ -15,8 +15,6 @@ export function ProfilePage() {
   const [email, setEmail] = useState(user?.email || '')
   const [major, setMajor] = useState(user?.major || '')
   const [year, setYear] = useState(user?.year || 'Freshman')
-  const [gpa, setGpa] = useState(user?.gpa ? String(user.gpa) : '')
-  const [location, setLocation] = useState(user?.location || '')
   const [needBased, setNeedBased] = useState(Boolean(user?.needBased))
 
   const handleSubmit = (e) => {
@@ -32,8 +30,6 @@ export function ProfilePage() {
       email: email.trim(),
       major: major.trim(),
       year,
-      gpa: Number(gpa) || 3.0,
-      location: location.trim(),
       needBased,
     })
 
@@ -113,34 +109,6 @@ export function ProfilePage() {
                 <option value="Senior">Senior (4th Year)</option>
                 <option value="Graduate">Graduate / Master's</option>
               </select>
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="user-gpa" className="form-label">Cumulative GPA (0 - 4.0)</label>
-              <input
-                id="user-gpa"
-                type="number"
-                step="0.01"
-                min="0"
-                max="4.0"
-                className="form-input"
-                value={gpa}
-                onChange={(e) => setGpa(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="user-loc" className="form-label">Campus Location / Region</label>
-              <input
-                id="user-loc"
-                type="text"
-                className="form-input"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
             </div>
           </div>
 

@@ -108,7 +108,7 @@ export function ScholarshipsPage() {
             {highMatchCount} high-probability awards tailored for you
           </h3>
           <p className="banner-desc">
-            Evaluated against your <strong>{user?.major || 'Computer Science'}</strong> major, {user?.year || 'Junior'} standing, and <strong>{user?.gpa || 3.7} GPA</strong>.
+            Evaluated against your <strong>{user?.major || 'General Studies'}</strong> major and <strong>{user?.year || 'Freshman'}</strong> academic standing.
           </p>
         </div>
         <div className="banner-badge-box">

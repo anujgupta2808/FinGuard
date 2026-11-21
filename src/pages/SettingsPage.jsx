@@ -11,7 +11,6 @@ import {
   User,
   GraduationCap,
   Mail,
-  MapPin,
   LogOut,
   Copy,
   DownloadCloud,
@@ -48,8 +47,6 @@ export function SettingsPage() {
   const [email, setEmail] = useState(user?.email || '')
   const [major, setMajor] = useState(user?.major || '')
   const [year, setYear] = useState(user?.year || 'Freshman')
-  const [gpa, setGpa] = useState(user?.gpa ? String(user.gpa) : '')
-  const [location, setLocation] = useState(user?.location || '')
   const [needBased, setNeedBased] = useState(Boolean(user?.needBased))
 
   const [confirmResetOpen, setConfirmResetOpen] = useState(false)
@@ -92,8 +89,6 @@ export function SettingsPage() {
       email: email.trim(),
       major: major.trim(),
       year,
-      gpa: Number(gpa) || 3.0,
-      location: location.trim(),
       needBased,
     })
 
@@ -153,7 +148,7 @@ export function SettingsPage() {
               </div>
               <div>
                 <h4 className="profile-name-display">{name || 'Student Name'}</h4>
-                <span className="profile-sub-display">{major} • {year} • GPA {gpa}</span>
+                <span className="profile-sub-display">{major ? `${major} • ` : ''}{year}</span>
               </div>
             </div>
 
@@ -210,34 +205,6 @@ export function SettingsPage() {
                   <option value="Senior">Senior (4th Year)</option>
                   <option value="Graduate">Graduate / Master's</option>
                 </select>
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="set-user-gpa" className="form-label">Cumulative GPA (0 - 4.0)</label>
-                <input
-                  id="set-user-gpa"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="4.0"
-                  className="form-input"
-                  value={gpa}
-                  onChange={(e) => setGpa(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="set-user-loc" className="form-label">Campus Location / Region</label>
-                <input
-                  id="set-user-loc"
-                  type="text"
-                  className="form-input"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
               </div>
             </div>
 
