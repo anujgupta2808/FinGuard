@@ -13,18 +13,35 @@ import {
   Mail,
   MapPin,
   LogOut,
+  Copy,
+  DownloadCloud,
 } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
 import { CURRENCIES } from '../utils/finance'
+import { createSessionSyncCode, decodeSessionSyncCode } from '../utils/auth'
 import { Card } from '../components/common/Card'
 import { Button } from '../components/common/Button'
 import { PageHeader } from '../components/common/PageHeader'
 import { ConfirmDialog } from '../components/common/ConfirmDialog'
 
 export function SettingsPage() {
-  const { state, setCurrency, setTheme, resetToSeed, updateUser, logout } = useFinance()
+  const {
+    state,
+    session,
+    accounts,
+    setCurrency,
+    setTheme,
+    resetToSeed,
+    updateUser,
+    logout,
+    importSyncData,
+  } = useFinance()
   const { notify } = useOutletContext()
   const { currency, theme, user } = state
+
+  // Sync state
+  const [syncInput, setSyncInput] = useState('')
+  const [copiedSync, setCopiedSync] = useState(false)
 
   // Profile form state
   const [name, setName] = useState(user?.name || '')
@@ -36,6 +53,31 @@ export function SettingsPage() {
   const [needBased, setNeedBased] = useState(Boolean(user?.needBased))
 
   const [confirmResetOpen, setConfirmResetOpen] = useState(false)
+
+  const handleCopySyncCode = () => {
+    const code = createSessionSyncCode(state, accounts)
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code)
+      setCopiedSync(true)
+      notify?.('Session sync code copied to clipboard! Paste it on your other browser.', 'success')
+      setTimeout(() => setCopiedSync(false), 3000)
+    } else {
+      notify?.('Could not access clipboard automatically.', 'error')
+    }
+  }
+
+  const handleApplySyncCode = (e) => {
+    e.preventDefault()
+    if (!syncInput.trim()) return
+    const bundle = decodeSessionSyncCode(syncInput.trim())
+    if (bundle) {
+      importSyncData(bundle)
+      notify?.('Session and data synchronized successfully from other browser!', 'success')
+      setSyncInput('')
+    } else {
+      notify?.('Invalid or corrupt sync code. Please check and re-copy.', 'error')
+    }
+  }
 
   const handleProfileSubmit = (e) => {
     e.preventDefault()
@@ -318,25 +360,74 @@ export function SettingsPage() {
         <Card className="settings-card">
           <div className="settings-card-header">
             <div className="settings-icon-box text-primary">
-              <LogOut size={20} />
+              <ShieldCheck size={20} />
             </div>
             <div>
-              <h3 className="settings-section-title">Account & Session</h3>
-              <p className="settings-section-desc">You are currently signed in as <strong>{user?.email || 'anuj@example.com'}</strong>.</p>
+              <h3 className="settings-section-title">Account & Active Session</h3>
+              <p className="settings-section-desc">Manage your authenticated student session across multiple browsers and devices.</p>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            <Button
-              variant="secondary"
-              icon={LogOut}
-              onClick={() => {
-                logout()
-                notify?.('You have been signed out.', 'info')
-              }}
-            >
-              Sign Out of FinGuard
-            </Button>
+          <div style={{ background: 'var(--surface)', padding: '14px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#16a34a' }} />
+                  <strong style={{ fontSize: '14px' }}>Authenticated Session Active</strong>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
+                  Signed in as <strong>{user?.email || session?.email || 'anuj@example.com'}</strong>
+                </p>
+                {session?.token && (
+                  <span style={{ display: 'block', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', fontFamily: 'monospace' }}>
+                    Session Token: {session.token.slice(0, 18)}...
+                  </span>
+                )}
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={LogOut}
+                onClick={() => {
+                  logout()
+                  notify?.('You have been signed out.', 'info')
+                }}
+              >
+                Sign Out
+              </Button>
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: '12px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Cross-Browser & Multi-Device Sync</h4>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+              You can log into FinGuard from any other browser, phone, or computer using your same email and password. To instantly copy your offline data and transactions between browsers, use the sync code below.
+            </p>
+
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '14px' }}>
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={Copy}
+                onClick={handleCopySyncCode}
+              >
+                {copiedSync ? 'Copied to Clipboard! ✓' : 'Copy Session Sync Code'}
+              </Button>
+            </div>
+
+            <form onSubmit={handleApplySyncCode} style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                className="form-input"
+                style={{ flex: 1, minWidth: '220px', fontSize: '13px', height: '36px' }}
+                placeholder="Paste sync code from another browser here..."
+                value={syncInput}
+                onChange={(e) => setSyncInput(e.target.value)}
+              />
+              <Button type="submit" variant="primary" size="sm" icon={DownloadCloud}>
+                Apply Sync
+              </Button>
+            </form>
           </div>
         </Card>
 

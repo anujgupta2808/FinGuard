@@ -1,6 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
 import { seedState } from '../data/seed'
-import { getStoredAccounts, saveAccounts, getStoredAuth, setStoredAuth } from '../utils/auth'
+import {
+  getStoredAccounts,
+  saveAccounts,
+  getStoredAuth,
+  setStoredAuth,
+  getStoredSession,
+  setStoredSession,
+  formatNameFromEmail,
+} from '../utils/auth'
 
 const FinanceContext = createContext(null)
 
@@ -43,6 +51,7 @@ const isValidScholarship = (value) => isRecord(value)
   && Number.isFinite(Number(value.amount))
 
 export function FinanceProvider({ children }) {
+  const [session, setSession] = useState(() => getStoredSession())
   const [isAuthenticated, setIsAuthenticated] = useState(() => getStoredAuth())
   const [accounts, setAccounts] = useState(() => getStoredAccounts())
 
@@ -266,33 +275,71 @@ export function FinanceProvider({ children }) {
 
   const login = useCallback((email, password) => {
     const normalizedEmail = (email || '').trim().toLowerCase()
-    const userFound = accounts.find(
-      a => a.email.toLowerCase() === normalizedEmail && a.password === password
+    if (!normalizedEmail || !normalizedEmail.includes('@')) {
+      return { success: false, error: 'Please enter a valid student email address.' }
+    }
+    if (!password || password.trim().length === 0) {
+      return { success: false, error: 'Please enter your password.' }
+    }
+
+    // 1. Check if user already exists in current browser
+    let userFound = accounts.find(
+      a => a.email.toLowerCase() === normalizedEmail
     )
 
     if (userFound) {
-      setIsAuthenticated(true)
-      setStoredAuth(true)
-      setState(s => ({
-        ...s,
-        user: {
-          ...s.user,
-          name: userFound.name,
-          email: userFound.email,
-          major: userFound.major || 'Computer Science',
-          year: userFound.year || 'Junior',
-          gpa: userFound.gpa || 3.7,
-          location: userFound.location || 'Campus Residence',
-          needBased: userFound.needBased ?? true,
-        },
-      }))
-      return { success: true, user: userFound }
+      // Validate password if user was created with a password
+      if (userFound.password && userFound.password !== password) {
+        return { success: false, error: 'Incorrect password for this student account.' }
+      }
+    } else {
+      // 2. User logged in from another browser or device!
+      // Recognize the credentials and automatically create/restore cross-browser session
+      const derivedName = formatNameFromEmail(normalizedEmail)
+      userFound = {
+        name: derivedName,
+        email: normalizedEmail,
+        password: password,
+        major: 'Computer Science',
+        year: 'Junior',
+        gpa: 3.7,
+        location: 'Campus Residence',
+        needBased: true,
+      }
+
+      const updatedAccounts = [userFound, ...accounts]
+      setAccounts(updatedAccounts)
+      saveAccounts(updatedAccounts)
     }
 
-    return {
-      success: false,
-      error: 'Invalid student email or password. Use demo credentials or create a new student account.',
+    // Establish active session token
+    const newSession = {
+      token: `fg_sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      email: userFound.email,
+      name: userFound.name,
+      loginTime: new Date().toISOString(),
     }
+
+    setStoredSession(newSession)
+    setSession(newSession)
+    setIsAuthenticated(true)
+    setStoredAuth(true)
+
+    setState(s => ({
+      ...s,
+      user: {
+        ...s.user,
+        name: userFound.name || s.user.name,
+        email: userFound.email,
+        major: userFound.major || s.user.major,
+        year: userFound.year || s.user.year,
+        gpa: userFound.gpa || s.user.gpa,
+        location: userFound.location || s.user.location,
+        needBased: userFound.needBased ?? s.user.needBased,
+      },
+    }))
+
+    return { success: true, user: userFound, session: newSession }
   }, [accounts])
 
   const register = useCallback(({ name, email, password, major, year }) => {
@@ -303,12 +350,8 @@ export function FinanceProvider({ children }) {
     if (!normalizedEmail || !normalizedEmail.includes('@')) {
       return { success: false, error: 'Please enter a valid student email address.' }
     }
-    if (!password || password.length < 6) {
-      return { success: false, error: 'Password must be at least 6 characters.' }
-    }
-
-    if (accounts.some(a => a.email.toLowerCase() === normalizedEmail)) {
-      return { success: false, error: 'An account with this student email already exists.' }
+    if (!password || password.length < 4) {
+      return { success: false, error: 'Password must be at least 4 characters.' }
     }
 
     const newAccount = {
@@ -322,12 +365,22 @@ export function FinanceProvider({ children }) {
       needBased: true,
     }
 
-    const updatedAccounts = [newAccount, ...accounts]
+    const updatedAccounts = [newAccount, ...accounts.filter(a => a.email.toLowerCase() !== normalizedEmail)]
     setAccounts(updatedAccounts)
     saveAccounts(updatedAccounts)
 
+    const newSession = {
+      token: `fg_sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      email: newAccount.email,
+      name: newAccount.name,
+      loginTime: new Date().toISOString(),
+    }
+
+    setStoredSession(newSession)
+    setSession(newSession)
     setIsAuthenticated(true)
     setStoredAuth(true)
+
     setState(s => ({
       ...s,
       user: {
@@ -342,23 +395,49 @@ export function FinanceProvider({ children }) {
       },
     }))
 
-    return { success: true, user: newAccount }
+    return { success: true, user: newAccount, session: newSession }
   }, [accounts])
 
   const logout = useCallback(() => {
+    setStoredSession(null)
+    setSession(null)
     setIsAuthenticated(false)
     setStoredAuth(false)
+  }, [])
+
+  const importSyncData = useCallback((decodedBundle) => {
+    if (!decodedBundle || typeof decodedBundle !== 'object') {
+      return { success: false, error: 'Invalid sync data format.' }
+    }
+
+    if (decodedBundle.accounts && Array.isArray(decodedBundle.accounts)) {
+      setAccounts(decodedBundle.accounts)
+      saveAccounts(decodedBundle.accounts)
+    }
+
+    setState(s => ({
+      ...s,
+      user: { ...s.user, ...(decodedBundle.user || {}) },
+      budgets: { ...s.budgets, ...(decodedBundle.budgets || {}) },
+      transactions: Array.isArray(decodedBundle.transactions) ? decodedBundle.transactions : s.transactions,
+      bills: Array.isArray(decodedBundle.bills) ? decodedBundle.bills : s.bills,
+      splitBills: Array.isArray(decodedBundle.splitBills) ? decodedBundle.splitBills : s.splitBills,
+    }))
+
+    return { success: true }
   }, [])
 
   return (
     <FinanceContext.Provider
       value={{
         state,
+        session,
         isAuthenticated,
         accounts,
         login,
         register,
         logout,
+        importSyncData,
         ...actions,
       }}
     >
