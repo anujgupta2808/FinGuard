@@ -148,7 +148,7 @@ export function SettingsPage() {
               </div>
               <div>
                 <h4 className="profile-name-display">{name || 'Student Name'}</h4>
-                <span className="profile-sub-display">{major ? `${major} • ` : ''}{year}</span>
+                <span className="profile-sub-display">{major ? `${major} • ${year}` : year}</span>
               </div>
             </div>
 

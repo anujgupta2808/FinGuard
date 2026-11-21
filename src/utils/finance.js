@@ -211,7 +211,7 @@ export const scholarshipScore = (s, user) => {
   let score = 40
   if (s.field === 'Any field' || (user?.major && /stem|computer|engineering|science|math|tech/i.test(user.major) && s.field === 'STEM') || (/art|design|creative/i.test(user?.major) && s.field === 'Arts')) score += 25
   if (s.level === 'Any level' || s.level?.includes(user?.year) || s.level === 'Undergraduate') score += 15
-  if (s.minGpa && user?.gpa) score += user.gpa >= s.minGpa ? 15 : -10
+  score += (user?.gpa || 0) >= (s.minGpa || 0) ? 15 : -20
   if (s.need && user?.needBased) score += 10
   return Math.max(0, Math.min(99, score))
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { User, Check, GraduationCap, Mail, MapPin } from 'lucide-react'
+import { User, Check, GraduationCap, Mail } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
 import { Card } from '../components/common/Card'
 import { Button } from '../components/common/Button'
@@ -112,15 +112,15 @@ export function ProfilePage() {
             </div>
           </div>
 
-          <div className="form-group checkbox-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={needBased}
-                onChange={(e) => setNeedBased(e.target.checked)}
-              />
-              <span>I qualify for or am interested in need-based student financial grants</span>
-            </label>
+            <div className="form-group checkbox-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={needBased}
+                  onChange={(e) => setNeedBased(e.target.checked)}
+                />
+                <span>I qualify for or am interested in need-based student financial grants</span>
+              </label>
           </div>
 
           <div className="profile-form-footer">
