@@ -48,10 +48,19 @@ export function FinanceProvider({ children }) {
 
   const [state, setState] = useState(() => {
     try {
-      const saved = localStorage.getItem('finguard-v2') || localStorage.getItem('finguard-v1')
+      // Clear old seed-polluted stores
+      localStorage.removeItem('finguard-v2')
+      localStorage.removeItem('finguard-v1')
+
+      const saved = localStorage.getItem('finguard-app-state')
       if (!saved) return seedState
 
       const parsed = JSON.parse(saved)
+      // If parsed contains old demo transactions (e.g. 't1' or 'Campus Bookstore'), discard them
+      if (Array.isArray(parsed.transactions) && parsed.transactions.some(t => t.id === 't1' || t.title === 'Campus Bookstore')) {
+        return seedState
+      }
+
       const user = { ...seedState.user, ...(parsed?.user ?? {}) }
       const goal = { ...seedState.goal, ...(parsed?.goal ?? {}) }
       const habit = { ...seedState.habit, ...(parsed?.habit ?? {}) }
@@ -61,11 +70,6 @@ export function FinanceProvider({ children }) {
       if (typeof user.name !== 'string' || !user.name.trim()) user.name = seedState.user.name
       if (typeof user.major !== 'string') user.major = seedState.user.major
       if (typeof user.year !== 'string') user.year = seedState.user.year
-      if (!Number.isFinite(Number(user.gpa))) user.gpa = seedState.user.gpa
-      if (!Number.isFinite(Number(goal.target)) || Number(goal.target) <= 0) goal.target = seedState.goal.target
-      if (!Number.isFinite(Number(goal.current)) || Number(goal.current) < 0) goal.current = seedState.goal.current
-      if (!Number.isFinite(Number(habit.streak)) || Number(habit.streak) < 0) habit.streak = seedState.habit.streak
-      if (!Number.isFinite(Number(habit.xp)) || Number(habit.xp) < 0) habit.xp = seedState.habit.xp
 
       return {
         ...seedState,
@@ -73,23 +77,23 @@ export function FinanceProvider({ children }) {
         user,
         currency,
         budgets: {
-          ...budgets,
+          total: Number(budgets?.total) || 0,
           categories: { ...seedState.budgets.categories, ...(budgets.categories ?? {}) },
         },
         goal,
         habit,
         transactions: Array.isArray(parsed.transactions)
           ? parsed.transactions.filter(isValidTransaction)
-          : seedState.transactions,
-        bills: Array.isArray(parsed.bills) && parsed.bills.length > 0
+          : [],
+        bills: Array.isArray(parsed.bills)
           ? parsed.bills.filter(isValidBill)
-          : seedState.bills,
-        splitBills: Array.isArray(parsed.splitBills) && parsed.splitBills.length > 0
+          : [],
+        splitBills: Array.isArray(parsed.splitBills)
           ? parsed.splitBills.filter(isValidSplitBill)
-          : seedState.splitBills,
+          : [],
         scholarships: Array.isArray(parsed.scholarships)
           ? parsed.scholarships.filter(isValidScholarship)
-          : seedState.scholarships,
+          : [],
       }
     } catch {
       return seedState
@@ -98,7 +102,7 @@ export function FinanceProvider({ children }) {
 
   useEffect(() => {
     try {
-      localStorage.setItem('finguard-v2', JSON.stringify(state))
+      localStorage.setItem('finguard-app-state', JSON.stringify(state))
     } catch (e) {
       console.error('Failed to save state to localStorage:', e)
     }

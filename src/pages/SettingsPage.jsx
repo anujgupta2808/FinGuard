@@ -70,7 +70,7 @@ export function SettingsPage() {
 
   const handleResetData = () => {
     resetToSeed()
-    notify?.('Reset application to sample student demo dataset.', 'info')
+    notify?.('All data cleared successfully.', 'info')
     setConfirmResetOpen(false)
   }
 
@@ -347,8 +347,8 @@ export function SettingsPage() {
               <RotateCcw size={20} />
             </div>
             <div>
-              <h3 className="settings-section-title text-danger">Reset Demo Data</h3>
-              <p className="settings-section-desc">Restore the default sample student transactions, bills, and split expenses.</p>
+              <h3 className="settings-section-title text-danger">Clear All Stored Data</h3>
+              <p className="settings-section-desc">Erase all recorded transactions, bills, and split expenses to return to a clean empty state.</p>
             </div>
           </div>
 
@@ -358,7 +358,7 @@ export function SettingsPage() {
               icon={RotateCcw}
               onClick={() => setConfirmResetOpen(true)}
             >
-              Reset to Demo Dataset
+              Clear All Stored Data
             </Button>
           </div>
         </Card>
@@ -368,9 +368,9 @@ export function SettingsPage() {
         isOpen={confirmResetOpen}
         onClose={() => setConfirmResetOpen(false)}
         onConfirm={handleResetData}
-        title="Reset All Data?"
-        message="This will overwrite any customized transactions, bills, and split expenses with the clean default student demonstration dataset."
-        confirmText="Confirm Reset"
+        title="Clear All Stored Data?"
+        message="This will remove all transactions, bills, split bills, and budget entries from your local browser storage."
+        confirmText="Clear All Data"
         variant="danger"
       />
     </div>

@@ -75,14 +75,31 @@ export const getMonthMetrics = (transactions) => {
 }
 
 export const getFinancialRisk = (state) => {
-  const metrics = getMonthMetrics(state.transactions)
-  const budgetTotal = Number(state.budgets?.total) || 1
-  const spendingRatio = (metrics.expenses / budgetTotal) * 100
+  const metrics = getMonthMetrics(state?.transactions)
+  const budgetTotal = Number(state?.budgets?.total) || 0
+  const spendingRatio = budgetTotal > 0 ? (metrics.expenses / budgetTotal) * 100 : 0
 
   const todayStr = new Date().toISOString().slice(0, 10)
-  const overdueBills = (state.bills || []).filter(b => b.status === 'Overdue' || (b.status !== 'Paid' && b.due < todayStr))
-  const upcomingBills = (state.bills || []).filter(b => b.status !== 'Paid' && b.due >= todayStr)
+  const overdueBills = (state?.bills || []).filter(b => b.status === 'Overdue' || (b.status !== 'Paid' && b.due < todayStr))
+  const upcomingBills = (state?.bills || []).filter(b => b.status !== 'Paid' && b.due >= todayStr)
   const upcomingBillsTotal = upcomingBills.reduce((s, b) => s + Number(b.amount || 0), 0)
+
+  if (metrics.count === 0 && (state?.bills || []).length === 0) {
+    return {
+      level: 'LOW',
+      label: 'NEW ACCOUNT',
+      color: 'blue',
+      score: 100,
+      spendingRatio: 0,
+      reasons: [
+        'Fresh ledger ready for student expense tracking.',
+        'No pending or overdue commitments.',
+        'Ready to set monthly budgets and log transactions.',
+      ],
+      overdueBillsCount: 0,
+      upcomingBillsTotal: 0,
+    }
+  }
 
   let level = 'LOW'
   let label = 'LOW RISK'

@@ -255,20 +255,28 @@ export function DashboardPage() {
               </Link>
             </div>
             <div className="tx-list">
-              {recentTransactions.map((tx) => (
-                <div key={tx.id} className="tx-list-item">
-                  <div className={`tx-icon ${tx.type === 'income' ? 'income' : 'expense'}`}>
-                    {tx.type === 'income' ? <ArrowDownLeft size={18} /> : <ArrowUpRight size={18} />}
-                  </div>
-                  <div className="tx-details">
-                    <span className="tx-title">{tx.title}</span>
-                    <span className="tx-meta">{tx.category} • {fmtDate(tx.date)}</span>
-                  </div>
-                  <div className={`tx-amount ${tx.type === 'income' ? 'text-success' : 'text-main'}`}>
-                    {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount, currency)}
-                  </div>
+              {recentTransactions.length === 0 ? (
+                <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <Receipt size={28} style={{ margin: '0 auto 8px', opacity: 0.4 }} />
+                  <p style={{ margin: 0, fontWeight: 600, color: 'var(--text-main)', fontSize: '14px' }}>No transactions recorded yet</p>
+                  <p style={{ margin: '4px 0 0', fontSize: '12px' }}>Click "Add Transaction" above to log your first income or expense.</p>
                 </div>
-              ))}
+              ) : (
+                recentTransactions.map((tx) => (
+                  <div key={tx.id} className="tx-list-item">
+                    <div className={`tx-icon ${tx.type === 'income' ? 'income' : 'expense'}`}>
+                      {tx.type === 'income' ? <ArrowDownLeft size={18} /> : <ArrowUpRight size={18} />}
+                    </div>
+                    <div className="tx-details">
+                      <span className="tx-title">{tx.title}</span>
+                      <span className="tx-meta">{tx.category} • {fmtDate(tx.date)}</span>
+                    </div>
+                    <div className={`tx-amount ${tx.type === 'income' ? 'text-success' : 'text-main'}`}>
+                      {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount, currency)}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </Card>
         </div>
@@ -331,7 +339,7 @@ export function DashboardPage() {
               {upcomingBills.length === 0 ? (
                 <div className="empty-bills-note">
                   <CheckCircle2 size={18} className="text-success" />
-                  <span>All scheduled bills are currently paid!</span>
+                  <span>{(bills || []).length === 0 ? 'No bills scheduled yet.' : 'All scheduled bills are currently paid!'}</span>
                 </div>
               ) : (
                 upcomingBills.map((bill) => {
