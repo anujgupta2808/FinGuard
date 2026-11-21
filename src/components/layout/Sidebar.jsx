@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
   ArrowLeftRight,
@@ -12,7 +12,6 @@ import {
   Settings,
   X,
   Shield,
-  Sparkles,
 } from 'lucide-react'
 import { useFinance } from '../../context/FinanceContext'
 
@@ -33,14 +32,7 @@ export const bottomNavItems = [
 
 export function Sidebar({ mobileOpen, onClose, onQuickAdd }) {
   const { state } = useFinance()
-  const { user, habit } = state
-
-  const initials = (user?.name || 'A G')
-    .split(' ')
-    .map(w => w[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+  const { habit } = state
 
   return (
     <>
@@ -71,20 +63,6 @@ export function Sidebar({ mobileOpen, onClose, onQuickAdd }) {
             <X size={20} />
           </button>
         </div>
-
-        <Link
-          to="/settings"
-          className="student-badge-card"
-          onClick={onClose}
-          title="Student Profile & Settings"
-          style={{ textDecoration: 'none', display: 'flex' }}
-        >
-          <div className="student-avatar-small">{initials}</div>
-          <div className="student-info">
-            <span className="student-name">{user?.name}</span>
-            <span className="student-meta">{user?.major || 'Student'} • {user?.year || 'Junior'}</span>
-          </div>
-        </Link>
 
         <nav className="sidebar-nav">
           <div className="nav-section-label">MAIN MENU</div>
