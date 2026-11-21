@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  Shield,
   ShieldCheck,
   Lock,
   EyeOff,
@@ -15,6 +14,7 @@ import {
   UserCheck,
   Sparkles,
 } from 'lucide-react'
+import logoImg from '../assets/logo.png'
 import { useFinance } from '../context/FinanceContext'
 import { Card } from '../components/common/Card'
 import { Button } from '../components/common/Button'
@@ -38,9 +38,7 @@ export function PrivacyPolicyPage() {
       <header className="privacy-navbar">
         <div className="privacy-nav-container">
           <div className="privacy-nav-brand">
-            <div className="brand-icon-box">
-              <Shield size={20} />
-            </div>
+            <img src={logoImg} alt="FinGuard" className="privacy-nav-logo" />
             <span className="brand-name">FinGuard</span>
             <span className="brand-badge">Privacy & Trust</span>
           </div>
@@ -305,7 +303,7 @@ export function PrivacyPolicyPage() {
         {/* Footer Return Card */}
         <div className="privacy-footer-card">
           <div className="privacy-footer-left">
-            <Shield size={24} className="text-primary" />
+            <img src={logoImg} alt="FinGuard" className="privacy-footer-logo" />
             <div>
               <strong>FinGuard Student Privacy Standard</strong>
               <p>Built transparently for students. No hidden clauses, no commercial tracking.</p>

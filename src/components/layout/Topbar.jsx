@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Bell, Moon, Sun, Shield } from 'lucide-react'
+import { Plus, Bell, Moon, Sun } from 'lucide-react'
+import logoImg from '../../assets/logo.png'
 import { useFinance } from '../../context/FinanceContext'
 import { Button } from '../common/Button'
 import { CURRENCIES } from '../../utils/finance'
@@ -26,7 +27,7 @@ export function Topbar({ onOpenMobileMenu, onQuickAdd, onQuickSplit, notify }) {
     <header className="app-topbar">
       <div className="topbar-left">
         <div className="topbar-branding-mobile">
-          <Shield size={18} className="text-primary" />
+          <img src={logoImg} alt="FinGuard" className="topbar-logo-img" />
           <span className="brand-text-sm">FinGuard</span>
         </div>
       </div>

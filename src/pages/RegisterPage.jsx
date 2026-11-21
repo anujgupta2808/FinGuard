@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
 import {
-  Shield,
   User,
   Mail,
   Lock,
@@ -14,6 +13,7 @@ import {
   Sparkles,
   AlertCircle,
 } from 'lucide-react'
+import logoImg from '../assets/logo.png'
 import { useFinance } from '../context/FinanceContext'
 import { Button } from '../components/common/Button'
 
@@ -96,9 +96,7 @@ export function RegisterPage() {
         {/* Left Side: Student Benefits Hero */}
         <div className="auth-hero-pane">
           <div className="auth-hero-branding">
-            <div className="brand-icon-box">
-              <Shield size={24} />
-            </div>
+            <img src={logoImg} alt="FinGuard Logo" className="auth-hero-logo" />
             <div className="brand-info">
               <span className="brand-name">FinGuard</span>
               <span className="brand-tag">Student Finance</span>
@@ -154,7 +152,7 @@ export function RegisterPage() {
         <div className="auth-form-pane">
           <div className="auth-form-header">
             <div className="auth-mobile-brand">
-              <Shield size={20} className="text-primary" />
+              <img src={logoImg} alt="FinGuard" className="auth-mobile-logo" />
               <span className="font-bold text-main">FinGuard</span>
             </div>
             <h2 className="auth-title">Create Account</h2>
