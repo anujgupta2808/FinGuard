@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, Plus, Bell, Moon, Sun, Shield } from 'lucide-react'
+import { Plus, Bell, Moon, Sun, Shield } from 'lucide-react'
 import { useFinance } from '../../context/FinanceContext'
 import { Button } from '../common/Button'
 import { CURRENCIES } from '../../utils/finance'
@@ -25,14 +25,6 @@ export function Topbar({ onOpenMobileMenu, onQuickAdd, onQuickSplit, notify }) {
   return (
     <header className="app-topbar">
       <div className="topbar-left">
-        <button
-          type="button"
-          className="mobile-menu-trigger"
-          onClick={onOpenMobileMenu}
-          aria-label="Open sidebar menu"
-        >
-          <Menu size={22} />
-        </button>
         <div className="topbar-branding-mobile">
           <Shield size={18} className="text-primary" />
           <span className="brand-text-sm">FinGuard</span>
