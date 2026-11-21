@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext, Link } from 'react-router-dom'
 import {
   Settings,
   Moon,
@@ -16,6 +16,7 @@ import {
   DownloadCloud,
   Cloud,
   RefreshCw,
+  FileText,
 } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
 import { CURRENCIES } from '../utils/finance'
@@ -443,7 +444,31 @@ export function SettingsPage() {
           </div>
         </Card>
 
-        {/* 6. Danger Zone */}
+        {/* 6. Student Data Privacy & Policy */}
+        <Card className="settings-card">
+          <div className="settings-card-header">
+            <div className="settings-icon-box text-success">
+              <ShieldCheck size={20} />
+            </div>
+            <div>
+              <h3 className="settings-section-title">Student Privacy & Data Protection</h3>
+              <p className="settings-section-desc">Zero tracking, no data selling, and local data sovereignty.</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', background: 'var(--surface)', padding: '14px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+            <div>
+              <strong style={{ fontSize: '13px' }}>FinGuard Student Privacy Pledge</strong>
+              <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                Review our comprehensive student privacy policy, encryption standards, and zero-ad principles.
+              </p>
+            </div>
+            <Link to="/privacy" className="btn btn-secondary btn-sm" style={{ textDecoration: 'none' }}>
+              <FileText size={15} /> View Privacy Policy
+            </Link>
+          </div>
+        </Card>
+
+        {/* 7. Danger Zone */}
         <Card className="settings-card border-danger">
           <div className="settings-card-header">
             <div className="settings-icon-box text-danger">

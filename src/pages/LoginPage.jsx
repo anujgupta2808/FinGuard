@@ -255,6 +255,12 @@ export function LoginPage() {
               Create an account
             </Link>
           </div>
+
+          <div style={{ textAlign: 'center', marginTop: '14px', paddingTop: '10px', borderTop: '1px solid var(--border-light)' }}>
+            <Link to="/privacy" className="auth-footer-link" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+              FinGuard Student Privacy Policy
+            </Link>
+          </div>
         </div>
       </div>
     </div>

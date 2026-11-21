@@ -14,14 +14,17 @@ import { ScholarshipsPage } from './pages/ScholarshipsPage'
 import { ReportsPage } from './pages/ReportsPage'
 import { SavingsPage } from './pages/SavingsPage'
 import { SettingsPage } from './pages/SettingsPage'
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage'
 
 export default function App() {
   return (
     <FinanceProvider>
       <Routes>
-        {/* Public Authentication Routes */}
+        {/* Public Authentication & Policy Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
 
         {/* Protected App Routes inside Shell */}
         <Route element={<Shell />}>

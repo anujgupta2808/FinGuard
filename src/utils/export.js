@@ -52,6 +52,11 @@ export const exportMonthlyReportToCSV = (reportData, currency = 'INR') => {
   downloadBlob(csvContent, `FinGuard_Report_${monthName.replace(/\s+/g, '_')}.csv`, 'text/csv;charset=utf-8;')
 }
 
+export const exportAllData = (state) => {
+  const jsonStr = JSON.stringify(state, null, 2)
+  downloadBlob(jsonStr, `FinGuard_Data_Export_${new Date().toISOString().slice(0, 10)}.json`, 'application/json;charset=utf-8;')
+}
+
 function downloadBlob(content, filename, mimeType) {
   const blob = new Blob([content], { type: mimeType })
   const url = URL.createObjectURL(blob)

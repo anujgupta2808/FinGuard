@@ -298,7 +298,13 @@ export function RegisterPage() {
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
                 />
-                <span>I agree to student privacy principles and campus fair budgeting</span>
+                <span>
+                  I agree to the{' '}
+                  <Link to="/privacy" target="_blank" className="auth-footer-link" style={{ textDecoration: 'underline' }}>
+                    Student Privacy Policy
+                  </Link>{' '}
+                  and campus fair budgeting principles
+                </span>
               </label>
             </div>
 

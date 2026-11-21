@@ -13,6 +13,7 @@ import {
   LogOut,
   X,
   Shield,
+  ShieldCheck,
 } from 'lucide-react'
 import { useFinance } from '../../context/FinanceContext'
 
@@ -29,6 +30,7 @@ export const navItems = [
 
 export const bottomNavItems = [
   { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/privacy', label: 'Privacy Policy', icon: ShieldCheck },
 ]
 
 export function Sidebar({ mobileOpen, onClose, onQuickAdd }) {
