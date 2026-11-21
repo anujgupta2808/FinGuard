@@ -23,12 +23,12 @@ export function RegisterPage() {
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [major, setMajor] = useState('Computer Science')
+  const [major, setMajor] = useState('')
   const [year, setYear] = useState('Freshman')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [agreeTerms, setAgreeTerms] = useState(true)
+  const [agreeTerms, setAgreeTerms] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -176,10 +176,11 @@ export function RegisterPage() {
                   id="reg-name"
                   type="text"
                   className="form-input has-left-icon"
-                  placeholder="e.g. Rahul Sharma"
+                  placeholder="Enter your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -194,10 +195,11 @@ export function RegisterPage() {
                   id="reg-email"
                   type="email"
                   className="form-input has-left-icon"
-                  placeholder="e.g. rahul@university.edu"
+                  placeholder="Enter your student email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -213,9 +215,10 @@ export function RegisterPage() {
                     id="reg-major"
                     type="text"
                     className="form-input has-left-icon"
-                    placeholder="e.g. Computer Science"
+                    placeholder="e.g. Computer Science, Economics"
                     value={major}
                     onChange={(e) => setMajor(e.target.value)}
+                    autoComplete="off"
                   />
                 </div>
               </div>

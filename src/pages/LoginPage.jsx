@@ -20,10 +20,10 @@ export function LoginPage() {
   const navigate = useNavigate()
   const { isAuthenticated, login, state } = useFinance()
 
-  const [email, setEmail] = useState('anuj@example.com')
-  const [password, setPassword] = useState('password123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(true)
+  const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [forgotInfo, setForgotInfo] = useState(false)
@@ -50,8 +50,6 @@ export function LoginPage() {
   }
 
   const handleDemoLogin = () => {
-    setEmail('anuj@example.com')
-    setPassword('password123')
     setError('')
     setLoading(true)
 
@@ -167,7 +165,7 @@ export function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  autoComplete="email"
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -195,7 +193,7 @@ export function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"

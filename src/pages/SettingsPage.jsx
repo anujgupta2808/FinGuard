@@ -28,11 +28,11 @@ export function SettingsPage() {
 
   // Profile form state
   const [name, setName] = useState(user?.name || '')
-  const [email, setEmail] = useState(user?.email || 'anuj@example.com')
-  const [major, setMajor] = useState(user?.major || 'Computer Science')
-  const [year, setYear] = useState(user?.year || 'Junior')
-  const [gpa, setGpa] = useState(String(user?.gpa || '3.7'))
-  const [location, setLocation] = useState(user?.location || 'Delhi / Bengaluru')
+  const [email, setEmail] = useState(user?.email || '')
+  const [major, setMajor] = useState(user?.major || '')
+  const [year, setYear] = useState(user?.year || 'Freshman')
+  const [gpa, setGpa] = useState(user?.gpa ? String(user.gpa) : '')
+  const [location, setLocation] = useState(user?.location || '')
   const [needBased, setNeedBased] = useState(Boolean(user?.needBased))
 
   const [confirmResetOpen, setConfirmResetOpen] = useState(false)

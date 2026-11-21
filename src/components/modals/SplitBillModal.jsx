@@ -21,8 +21,8 @@ export function SplitBillModal({ isOpen, onClose, onSaved }) {
   const [addToExpenses, setAddToExpenses] = useState(true)
 
   const [participants, setParticipants] = useState([
-    { id: 'p-user', name: userName, isUser: true, share: 0, percent: 50 },
-    { id: 'p-friend-1', name: 'Rahul Sharma', isUser: false, share: 0, percent: 50 },
+    { id: 'p-user', name: userName || 'You', isUser: true, share: 0, percent: 100 },
+    { id: 'p-friend-1', name: '', isUser: false, share: 0, percent: 0 },
   ])
 
   const [customShares, setCustomShares] = useState({})
@@ -36,17 +36,17 @@ export function SplitBillModal({ isOpen, onClose, onSaved }) {
       setDate(new Date().toISOString().slice(0, 10))
       setCategory('Food')
       setNote('')
-      setPaidBy(userName)
+      setPaidBy(userName || 'You')
       setSplitMethod('equal')
       setAddToExpenses(true)
       setError('')
       const initialParts = [
-        { id: `p-${Date.now()}-1`, name: userName, isUser: true, share: 0, percent: 50 },
-        { id: `p-${Date.now()}-2`, name: 'Rahul', isUser: false, share: 0, percent: 50 },
+        { id: `p-${Date.now()}-1`, name: userName || 'You', isUser: true, share: 0, percent: 100 },
+        { id: `p-${Date.now()}-2`, name: '', isUser: false, share: 0, percent: 0 },
       ]
       setParticipants(initialParts)
       setCustomShares({})
-      setPercentageShares({ [initialParts[0].id]: 50, [initialParts[1].id]: 50 })
+      setPercentageShares({ [initialParts[0].id]: 100, [initialParts[1].id]: 0 })
     }
   }, [isOpen, userName])
 
