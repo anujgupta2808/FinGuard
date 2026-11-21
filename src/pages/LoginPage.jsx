@@ -33,33 +33,38 @@ export function LoginPage() {
     return <Navigate to="/" replace />
   }
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    setTimeout(() => {
-      const res = login(email, password)
+    try {
+      const res = await login(email, password)
       setLoading(false)
       if (res.success) {
         navigate('/')
       } else {
         setError(res.error || 'Failed to sign in. Please verify your credentials.')
       }
-    }, 300)
+    } catch {
+      setLoading(false)
+      setError('An error occurred during sign in. Please try again.')
+    }
   }
 
-  const handleDemoLogin = () => {
+  const handleDemoLogin = async () => {
     setError('')
     setLoading(true)
 
-    setTimeout(() => {
-      const res = login('anuj@example.com', 'password123')
+    try {
+      const res = await login('anuj@example.com', 'password123')
       setLoading(false)
       if (res.success) {
         navigate('/')
       }
-    }, 200)
+    } catch {
+      setLoading(false)
+    }
   }
 
   return (

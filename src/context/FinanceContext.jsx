@@ -9,6 +9,11 @@ import {
   setStoredSession,
   formatNameFromEmail,
 } from '../utils/auth'
+import {
+  fetchCloudState,
+  pushCloudState,
+  debounceCloudPush,
+} from '../utils/cloudSync'
 
 const FinanceContext = createContext(null)
 
@@ -115,7 +120,46 @@ export function FinanceProvider({ children }) {
     } catch (e) {
       console.error('Failed to save state to localStorage:', e)
     }
-  }, [state])
+
+    // Automatically synchronize state to cloud for cross-browser continuity
+    if (session?.email) {
+      const currentAccount = accounts.find(
+        (a) => a.email.toLowerCase() === session.email.toLowerCase()
+      )
+      debounceCloudPush(session.email, state, currentAccount)
+    }
+  }, [state, session, accounts])
+
+  // Background check on launch to sync changes made from other browsers or devices
+  useEffect(() => {
+    if (session?.email) {
+      fetchCloudState(session.email)
+        .then((cloudData) => {
+          if (cloudData?.state) {
+            const cs = cloudData.state
+            setState((curr) => {
+              const remoteTxLen = Array.isArray(cs.transactions) ? cs.transactions.length : 0
+              const localTxLen = Array.isArray(curr.transactions) ? curr.transactions.length : 0
+
+              // If remote cloud has updated transactions or newer dataset, hydrate
+              if (remoteTxLen > localTxLen || (remoteTxLen > 0 && !localTxLen)) {
+                return {
+                  ...curr,
+                  ...cs,
+                  user: { ...curr.user, ...(cs.user || {}) },
+                  scholarships:
+                    curr.scholarships && curr.scholarships.length > 0
+                      ? curr.scholarships
+                      : cs.scholarships || [],
+                }
+              }
+              return curr
+            })
+          }
+        })
+        .catch(() => {})
+    }
+  }, [session?.email])
 
   const actions = useMemo(() => ({
     // Transactions
@@ -292,7 +336,7 @@ export function FinanceProvider({ children }) {
     resetToSeed: () => setState(seedState),
   }), [])
 
-  const login = useCallback((email, password) => {
+  const login = useCallback(async (email, password) => {
     const normalizedEmail = (email || '').trim().toLowerCase()
     if (!normalizedEmail || !normalizedEmail.includes('@')) {
       return { success: false, error: 'Please enter a valid student email address.' }
@@ -301,19 +345,53 @@ export function FinanceProvider({ children }) {
       return { success: false, error: 'Please enter your password.' }
     }
 
-    // 1. Check if user already exists in current browser
+    // 1. Check cloud storage first for cross-browser synchronization
+    let cloudData = null
+    try {
+      cloudData = await fetchCloudState(normalizedEmail)
+    } catch (e) {
+      console.warn('Cloud fetch during login failed:', e)
+    }
+
     let userFound = accounts.find(
       a => a.email.toLowerCase() === normalizedEmail
     )
 
-    if (userFound) {
-      // Validate password if user was created with a password
-      if (userFound.password && userFound.password !== password) {
-        return { success: false, error: 'Incorrect password for this student account.' }
+    // If cloud data exists, verify password and restore full user state!
+    if (cloudData) {
+      if (cloudData.account && cloudData.account.password) {
+        if (cloudData.account.password !== password) {
+          return { success: false, error: 'Incorrect password for this student account.' }
+        }
+        userFound = { ...cloudData.account }
       }
-    } else {
-      // 2. User logged in from another browser or device!
-      // Recognize the credentials and automatically create/restore cross-browser session
+
+      // Restore full student state across browsers!
+      if (cloudData.state) {
+        const cs = cloudData.state
+        const restoredState = {
+          ...seedState,
+          ...cs,
+          user: { ...seedState.user, ...(cs.user || {}) },
+          budgets: cs.budgets || seedState.budgets,
+          transactions: Array.isArray(cs.transactions) ? cs.transactions : [],
+          bills: Array.isArray(cs.bills) ? cs.bills : [],
+          splitBills: Array.isArray(cs.splitBills) ? cs.splitBills : [],
+          scholarships: Array.isArray(cs.scholarships) && cs.scholarships.length > 0 ? cs.scholarships : seedState.scholarships,
+          goal: cs.goal || seedState.goal,
+          habit: cs.habit || seedState.habit,
+          currency: cs.currency || seedState.currency || 'INR',
+          theme: cs.theme || seedState.theme || 'light',
+        }
+        setState(restoredState)
+        try {
+          localStorage.setItem('finguard-app-state', JSON.stringify(restoredState))
+        } catch {}
+      }
+    }
+
+    if (!userFound) {
+      // 2. Fallback to local accounts or create new account record
       const derivedName = formatNameFromEmail(normalizedEmail)
       userFound = {
         name: derivedName,
@@ -325,11 +403,14 @@ export function FinanceProvider({ children }) {
         location: 'Campus Residence',
         needBased: true,
       }
-
-      const updatedAccounts = [userFound, ...accounts]
-      setAccounts(updatedAccounts)
-      saveAccounts(updatedAccounts)
+    } else if (userFound.password && userFound.password !== password) {
+      return { success: false, error: 'Incorrect password for this student account.' }
     }
+
+    // Update local accounts
+    const updatedAccounts = [userFound, ...accounts.filter(a => a.email.toLowerCase() !== normalizedEmail)]
+    setAccounts(updatedAccounts)
+    saveAccounts(updatedAccounts)
 
     // Establish active session token
     const newSession = {
@@ -358,10 +439,15 @@ export function FinanceProvider({ children }) {
       },
     }))
 
-    return { success: true, user: userFound, session: newSession }
-  }, [accounts])
+    // If cloud had no data, immediately seed the cloud with this state
+    if (!cloudData) {
+      pushCloudState(normalizedEmail, state, userFound).catch(() => {})
+    }
 
-  const register = useCallback(({ name, email, password, major, year }) => {
+    return { success: true, user: userFound, session: newSession }
+  }, [accounts, state])
+
+  const register = useCallback(async ({ name, email, password, major, year }) => {
     const normalizedEmail = (email || '').trim().toLowerCase()
     if (!name || !name.trim()) {
       return { success: false, error: 'Please enter your full name.' }
@@ -377,7 +463,7 @@ export function FinanceProvider({ children }) {
       name: name.trim(),
       email: normalizedEmail,
       password,
-      major: (major || 'General Studies').trim(),
+      major: (major || 'Computer Science').trim(),
       year: year || 'Freshman',
       gpa: 3.8,
       location: 'Campus Residence',
@@ -400,22 +486,56 @@ export function FinanceProvider({ children }) {
     setIsAuthenticated(true)
     setStoredAuth(true)
 
-    setState(s => ({
-      ...s,
+    const freshState = {
+      ...seedState,
       user: {
-        ...s.user,
+        ...seedState.user,
         name: newAccount.name,
         email: newAccount.email,
         major: newAccount.major,
         year: newAccount.year,
-        gpa: newAccount.gpa,
-        location: newAccount.location,
-        needBased: newAccount.needBased,
       },
-    }))
+    }
+
+    setState(freshState)
+    try {
+      localStorage.setItem('finguard-app-state', JSON.stringify(freshState))
+    } catch {}
+
+    // Push new account and initial state to cloud
+    await pushCloudState(normalizedEmail, freshState, newAccount).catch(() => {})
 
     return { success: true, user: newAccount, session: newSession }
   }, [accounts])
+
+  const syncWithCloud = useCallback(async () => {
+    if (!session?.email) {
+      return { success: false, error: 'No active student session to sync.' }
+    }
+    try {
+      const cloudData = await fetchCloudState(session.email)
+      const currentAccount = accounts.find(a => a.email.toLowerCase() === session.email.toLowerCase())
+      if (cloudData?.state) {
+        const mergedState = {
+          ...state,
+          ...cloudData.state,
+          user: { ...state.user, ...(cloudData.state.user || {}) },
+          transactions: cloudData.state.transactions || state.transactions,
+          budgets: cloudData.state.budgets || state.budgets,
+          bills: cloudData.state.bills || state.bills,
+          splitBills: cloudData.state.splitBills || state.splitBills,
+        }
+        setState(mergedState)
+        localStorage.setItem('finguard-app-state', JSON.stringify(mergedState))
+        return { success: true, timestamp: new Date().toISOString() }
+      } else {
+        await pushCloudState(session.email, state, currentAccount)
+        return { success: true, timestamp: new Date().toISOString() }
+      }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
+  }, [session, state, accounts])
 
   const logout = useCallback(() => {
     setStoredSession(null)
@@ -456,6 +576,7 @@ export function FinanceProvider({ children }) {
         login,
         register,
         logout,
+        syncWithCloud,
         importSyncData,
         ...actions,
       }}

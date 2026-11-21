@@ -37,7 +37,7 @@ export function RegisterPage() {
     return <Navigate to="/" replace />
   }
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
@@ -68,8 +68,8 @@ export function RegisterPage() {
 
     setLoading(true)
 
-    setTimeout(() => {
-      const res = register({
+    try {
+      const res = await register({
         name: name.trim(),
         email: email.trim(),
         password,
@@ -84,7 +84,10 @@ export function RegisterPage() {
       } else {
         setError(res.error || 'Failed to create account.')
       }
-    }, 300)
+    } catch {
+      setLoading(false)
+      setError('An error occurred during registration. Please try again.')
+    }
   }
 
   return (

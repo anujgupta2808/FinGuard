@@ -14,6 +14,8 @@ import {
   LogOut,
   Copy,
   DownloadCloud,
+  Cloud,
+  RefreshCw,
 } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
 import { CURRENCIES } from '../utils/finance'
@@ -33,6 +35,7 @@ export function SettingsPage() {
     resetToSeed,
     updateUser,
     logout,
+    syncWithCloud,
     importSyncData,
   } = useFinance()
   const { notify } = useOutletContext()
@@ -41,6 +44,7 @@ export function SettingsPage() {
   // Sync state
   const [syncInput, setSyncInput] = useState('')
   const [copiedSync, setCopiedSync] = useState(false)
+  const [isCloudSyncing, setIsCloudSyncing] = useState(false)
 
   // Profile form state
   const [name, setName] = useState(user?.name || '')
@@ -73,6 +77,22 @@ export function SettingsPage() {
       setSyncInput('')
     } else {
       notify?.('Invalid or corrupt sync code. Please check and re-copy.', 'error')
+    }
+  }
+
+  const handleCloudSyncNow = async () => {
+    setIsCloudSyncing(true)
+    try {
+      const res = await syncWithCloud()
+      setIsCloudSyncing(false)
+      if (res.success) {
+        notify?.('Account data and transactions successfully synchronized with cloud! Consistent across all browsers.', 'success')
+      } else {
+        notify?.('Cloud sync: ' + (res.error || 'Failed to sync with cloud. Local data preserved.'), 'warning')
+      }
+    } catch {
+      setIsCloudSyncing(false)
+      notify?.('Cloud sync temporarily unavailable. Operating on local storage.', 'warning')
     }
   }
 
@@ -365,10 +385,35 @@ export function SettingsPage() {
             </div>
           </div>
 
+          {/* Automatic Cloud Synchronization across all browsers */}
+          <div style={{ background: 'rgba(16, 185, 129, 0.08)', padding: '14px 16px', borderRadius: 'var(--radius-md)', border: '1px solid rgba(16, 185, 129, 0.25)', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+              <div style={{ flex: 1, minWidth: '220px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Cloud size={16} className="text-success" />
+                  <strong style={{ fontSize: '13px' }}>Cross-Browser Real-Time Cloud Sync</strong>
+                  <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 6px', background: '#10b981', color: '#fff', borderRadius: '4px' }}>ACTIVE</span>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  Your student data (transactions, budgets, bills, split bills, scholarships) automatically synchronizes with the cloud. When you log in with this email on any other browser or mobile phone, all your data will remain constant, identical, and fully intact.
+                </p>
+              </div>
+              <Button
+                variant="primary"
+                size="sm"
+                icon={RefreshCw}
+                onClick={handleCloudSyncNow}
+                disabled={isCloudSyncing}
+              >
+                {isCloudSyncing ? 'Syncing...' : 'Sync Cloud Now'}
+              </Button>
+            </div>
+          </div>
+
           <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: '12px' }}>
-            <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Cross-Browser & Multi-Device Sync</h4>
+            <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Manual Offline Backup & Transfer Code</h4>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '12px' }}>
-              You can log into FinGuard from any other browser, phone, or computer using your same email and password. To instantly copy your offline data and transactions between browsers, use the sync code below.
+              For offline or air-gapped devices without an active internet connection, you can generate and import a 1-click encrypted sync bundle below.
             </p>
 
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '14px' }}>
