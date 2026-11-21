@@ -7,7 +7,6 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
-  Zap,
   CheckCircle2,
   Sparkles,
   AlertCircle,
@@ -49,21 +48,6 @@ export function LoginPage() {
     } catch {
       setLoading(false)
       setError('An error occurred during sign in. Please try again.')
-    }
-  }
-
-  const handleDemoLogin = async () => {
-    setError('')
-    setLoading(true)
-
-    try {
-      const res = await login('anuj@example.com', 'password123')
-      setLoading(false)
-      if (res.success) {
-        navigate('/')
-      }
-    } catch {
-      setLoading(false)
     }
   }
 
@@ -149,8 +133,8 @@ export function LoginPage() {
             <div className="auth-info-banner">
               <HelpCircle size={18} />
               <div>
-                <strong>Demo Credentials:</strong>
-                <p>Email: <code>anuj@example.com</code> | Password: <code>password123</code></p>
+                <strong>Password Recovery:</strong>
+                <p>FinGuard accounts are linked to your student email. If you need a new login, you can create an account on the registration page.</p>
               </div>
             </div>
           )}
@@ -233,21 +217,6 @@ export function LoginPage() {
               <ArrowRight size={18} />
             </Button>
           </form>
-
-          <div className="auth-divider">
-            <span>OR TEST DRIVE INSTANTLY</span>
-          </div>
-
-          <Button
-            type="button"
-            variant="secondary"
-            size="md"
-            icon={Zap}
-            onClick={handleDemoLogin}
-            className="w-full demo-access-btn"
-          >
-            One-Click Demo Login (Anuj Gupta)
-          </Button>
 
           <div className="auth-card-footer">
             <span>Don't have a student account?</span>

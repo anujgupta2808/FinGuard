@@ -2,18 +2,7 @@ const ACCOUNTS_KEY = 'finguard-accounts'
 const AUTH_KEY = 'finguard-auth'
 const SESSION_KEY = 'finguard-session'
 
-export const defaultAccounts = [
-  {
-    name: 'Anuj Gupta',
-    email: 'anuj@example.com',
-    password: 'password123',
-    major: 'Computer Science',
-    year: 'Junior',
-    gpa: 3.7,
-    location: 'Delhi / Bengaluru',
-    needBased: true,
-  },
-]
+export const defaultAccounts = []
 
 export function formatNameFromEmail(email) {
   if (!email || !email.includes('@')) return 'Student'
