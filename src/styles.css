@@ -431,13 +431,6 @@ a {
   gap: 12px;
 }
 
-.mobile-menu-trigger {
-  display: none;
-  padding: 8px;
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
-}
-
 .topbar-branding-mobile {
   display: none;
   align-items: center;
@@ -3508,7 +3501,7 @@ html, body {
     place-items: center;
   }
 
-  .mobile-menu-trigger, .topbar-branding-mobile {
+  .topbar-branding-mobile {
     display: flex;
   }
 

@@ -6,7 +6,7 @@ import {
   Wallet,
   Receipt,
   Users2,
-  Menu,
+  MoreHorizontal,
 } from 'lucide-react'
 
 export function BottomNav({ onOpenMore }) {
@@ -40,7 +40,7 @@ export function BottomNav({ onOpenMore }) {
         onClick={onOpenMore}
         aria-label="More options"
       >
-        <Menu size={20} className="bottom-nav-icon" />
+        <MoreHorizontal size={20} className="bottom-nav-icon" />
         <span className="bottom-nav-label">More</span>
       </button>
     </nav>
