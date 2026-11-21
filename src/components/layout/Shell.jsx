@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, Navigate } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { BottomNav } from './BottomNav'
@@ -9,12 +9,16 @@ import { SplitBillModal } from '../modals/SplitBillModal'
 import { useFinance } from '../../context/FinanceContext'
 
 export function Shell() {
-  const { state } = useFinance()
+  const { state, isAuthenticated } = useFinance()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [txModalOpen, setTxModalOpen] = useState(false)
   const [splitModalOpen, setSplitModalOpen] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState('success')
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
 
   const notify = (msg, type = 'success') => {
     setToastMessage(msg)

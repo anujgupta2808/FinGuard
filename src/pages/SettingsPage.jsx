@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Mail,
   MapPin,
+  LogOut,
 } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
 import { CURRENCIES } from '../utils/finance'
@@ -21,7 +22,7 @@ import { PageHeader } from '../components/common/PageHeader'
 import { ConfirmDialog } from '../components/common/ConfirmDialog'
 
 export function SettingsPage() {
-  const { state, setCurrency, setTheme, resetToSeed, updateUser } = useFinance()
+  const { state, setCurrency, setTheme, resetToSeed, updateUser, logout } = useFinance()
   const { notify } = useOutletContext()
   const { currency, theme, user } = state
 
@@ -313,7 +314,33 @@ export function SettingsPage() {
           </div>
         </Card>
 
-        {/* 5. Danger Zone */}
+        {/* 5. Account & Session */}
+        <Card className="settings-card">
+          <div className="settings-card-header">
+            <div className="settings-icon-box text-primary">
+              <LogOut size={20} />
+            </div>
+            <div>
+              <h3 className="settings-section-title">Account & Session</h3>
+              <p className="settings-section-desc">You are currently signed in as <strong>{user?.email || 'anuj@example.com'}</strong>.</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <Button
+              variant="secondary"
+              icon={LogOut}
+              onClick={() => {
+                logout()
+                notify?.('You have been signed out.', 'info')
+              }}
+            >
+              Sign Out of FinGuard
+            </Button>
+          </div>
+        </Card>
+
+        {/* 6. Danger Zone */}
         <Card className="settings-card border-danger">
           <div className="settings-card-header">
             <div className="settings-icon-box text-danger">

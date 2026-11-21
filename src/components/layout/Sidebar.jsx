@@ -10,6 +10,7 @@ import {
   BarChart3,
   PiggyBank,
   Settings,
+  LogOut,
   X,
   Shield,
 } from 'lucide-react'
@@ -31,7 +32,7 @@ export const bottomNavItems = [
 ]
 
 export function Sidebar({ mobileOpen, onClose, onQuickAdd }) {
-  const { state } = useFinance()
+  const { state, logout } = useFinance()
   const { habit } = state
 
   return (
@@ -98,6 +99,19 @@ export function Sidebar({ mobileOpen, onClose, onQuickAdd }) {
               </NavLink>
             )
           })}
+
+          <button
+            type="button"
+            className="sidebar-link sidebar-logout-btn"
+            onClick={() => {
+              onClose?.()
+              logout()
+            }}
+            title="Sign out of student account"
+          >
+            <LogOut size={19} className="nav-icon text-muted" />
+            <span className="nav-label">Sign Out</span>
+          </button>
         </nav>
 
         <div className="sidebar-footer">

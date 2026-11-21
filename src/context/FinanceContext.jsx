@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
 import { seedState } from '../data/seed'
+import { getStoredAccounts, saveAccounts, getStoredAuth, setStoredAuth } from '../utils/auth'
 
 const FinanceContext = createContext(null)
 
@@ -42,6 +43,9 @@ const isValidScholarship = (value) => isRecord(value)
   && Number.isFinite(Number(value.amount))
 
 export function FinanceProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => getStoredAuth())
+  const [accounts, setAccounts] = useState(() => getStoredAccounts())
+
   const [state, setState] = useState(() => {
     try {
       const saved = localStorage.getItem('finguard-v2') || localStorage.getItem('finguard-v1')
@@ -256,8 +260,104 @@ export function FinanceProvider({ children }) {
     resetToSeed: () => setState(seedState),
   }), [])
 
+  const login = useCallback((email, password) => {
+    const normalizedEmail = (email || '').trim().toLowerCase()
+    const userFound = accounts.find(
+      a => a.email.toLowerCase() === normalizedEmail && a.password === password
+    )
+
+    if (userFound) {
+      setIsAuthenticated(true)
+      setStoredAuth(true)
+      setState(s => ({
+        ...s,
+        user: {
+          ...s.user,
+          name: userFound.name,
+          email: userFound.email,
+          major: userFound.major || 'Computer Science',
+          year: userFound.year || 'Junior',
+          gpa: userFound.gpa || 3.7,
+          location: userFound.location || 'Campus Residence',
+          needBased: userFound.needBased ?? true,
+        },
+      }))
+      return { success: true, user: userFound }
+    }
+
+    return {
+      success: false,
+      error: 'Invalid student email or password. Use demo credentials or create a new student account.',
+    }
+  }, [accounts])
+
+  const register = useCallback(({ name, email, password, major, year }) => {
+    const normalizedEmail = (email || '').trim().toLowerCase()
+    if (!name || !name.trim()) {
+      return { success: false, error: 'Please enter your full name.' }
+    }
+    if (!normalizedEmail || !normalizedEmail.includes('@')) {
+      return { success: false, error: 'Please enter a valid student email address.' }
+    }
+    if (!password || password.length < 6) {
+      return { success: false, error: 'Password must be at least 6 characters.' }
+    }
+
+    if (accounts.some(a => a.email.toLowerCase() === normalizedEmail)) {
+      return { success: false, error: 'An account with this student email already exists.' }
+    }
+
+    const newAccount = {
+      name: name.trim(),
+      email: normalizedEmail,
+      password,
+      major: (major || 'General Studies').trim(),
+      year: year || 'Freshman',
+      gpa: 3.8,
+      location: 'Campus Residence',
+      needBased: true,
+    }
+
+    const updatedAccounts = [newAccount, ...accounts]
+    setAccounts(updatedAccounts)
+    saveAccounts(updatedAccounts)
+
+    setIsAuthenticated(true)
+    setStoredAuth(true)
+    setState(s => ({
+      ...s,
+      user: {
+        ...s.user,
+        name: newAccount.name,
+        email: newAccount.email,
+        major: newAccount.major,
+        year: newAccount.year,
+        gpa: newAccount.gpa,
+        location: newAccount.location,
+        needBased: newAccount.needBased,
+      },
+    }))
+
+    return { success: true, user: newAccount }
+  }, [accounts])
+
+  const logout = useCallback(() => {
+    setIsAuthenticated(false)
+    setStoredAuth(false)
+  }, [])
+
   return (
-    <FinanceContext.Provider value={{ state, ...actions }}>
+    <FinanceContext.Provider
+      value={{
+        state,
+        isAuthenticated,
+        accounts,
+        login,
+        register,
+        logout,
+        ...actions,
+      }}
+    >
       {children}
     </FinanceContext.Provider>
   )

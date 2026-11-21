@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { FinanceProvider } from './context/FinanceContext'
 import { Shell } from './components/layout/Shell'
 
+import { LoginPage } from './pages/LoginPage'
+import { RegisterPage } from './pages/RegisterPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { TransactionsPage } from './pages/TransactionsPage'
 import { BudgetPage } from './pages/BudgetPage'
@@ -17,6 +19,11 @@ export default function App() {
   return (
     <FinanceProvider>
       <Routes>
+        {/* Public Authentication Routes */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protected App Routes inside Shell */}
         <Route element={<Shell />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
