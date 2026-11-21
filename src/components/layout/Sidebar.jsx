@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import {
   LayoutDashboard,
   ArrowLeftRight,
@@ -9,7 +9,6 @@ import {
   GraduationCap,
   BarChart3,
   PiggyBank,
-  User,
   Settings,
   X,
   Shield,
@@ -29,7 +28,6 @@ export const navItems = [
 ]
 
 export const bottomNavItems = [
-  { to: '/profile', label: 'Profile', icon: User },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -74,13 +72,19 @@ export function Sidebar({ mobileOpen, onClose, onQuickAdd }) {
           </button>
         </div>
 
-        <div className="student-badge-card">
+        <Link
+          to="/settings"
+          className="student-badge-card"
+          onClick={onClose}
+          title="Student Profile & Settings"
+          style={{ textDecoration: 'none', display: 'flex' }}
+        >
           <div className="student-avatar-small">{initials}</div>
           <div className="student-info">
             <span className="student-name">{user?.name}</span>
             <span className="student-meta">{user?.major || 'Student'} • {user?.year || 'Junior'}</span>
           </div>
-        </div>
+        </Link>
 
         <nav className="sidebar-nav">
           <div className="nav-section-label">MAIN MENU</div>

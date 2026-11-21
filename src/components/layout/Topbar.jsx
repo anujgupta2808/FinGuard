@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { Menu, Plus, Bell, Moon, Sun, Shield } from 'lucide-react'
 import { useFinance } from '../../context/FinanceContext'
 import { Button } from '../common/Button'
@@ -84,9 +85,14 @@ export function Topbar({ onOpenMobileMenu, onQuickAdd, onQuickSplit, notify }) {
           </Button>
         </div>
 
-        <div className="user-avatar-pill hidden-xs" title={user?.name}>
+        <Link
+          to="/settings"
+          className="user-avatar-pill hidden-xs"
+          title={`Student Profile & Settings: ${user?.name}`}
+          style={{ textDecoration: 'none' }}
+        >
           <span className="user-avatar-text">{initials}</span>
-        </div>
+        </Link>
       </div>
     </header>
   )

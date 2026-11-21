@@ -11,7 +11,6 @@ import { SplitBillsPage } from './pages/SplitBillsPage'
 import { ScholarshipsPage } from './pages/ScholarshipsPage'
 import { ReportsPage } from './pages/ReportsPage'
 import { SavingsPage } from './pages/SavingsPage'
-import { ProfilePage } from './pages/ProfilePage'
 import { SettingsPage } from './pages/SettingsPage'
 
 export default function App() {
@@ -27,7 +26,7 @@ export default function App() {
           <Route path="/scholarships" element={<ScholarshipsPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/savings" element={<SavingsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile" element={<Navigate to="/settings" replace />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

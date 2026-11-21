@@ -91,7 +91,7 @@ export function ScholarshipsPage() {
         title="Scholarship Finder"
         description="Discover grants, fellowships, and tuition awards matching your academic profile."
         actions={
-          <Link to="/profile" className="btn btn-secondary btn-md">
+          <Link to="/settings" className="btn btn-secondary btn-md">
             <User size={16} /> Edit Student Profile
           </Link>
         }
