@@ -49,11 +49,7 @@ export function Sidebar({ mobileOpen, onClose, onQuickAdd }) {
       <aside className={`app-sidebar ${mobileOpen ? 'open' : ''}`}>
         <div className="sidebar-brand-row">
           <div className="brand-logo">
-            <img src={logoImg} alt="FinGuard Logo" className="brand-logo-img" />
-            <div className="brand-text">
-              <span className="brand-title">FinGuard</span>
-              <span className="brand-subtitle">Student Finance</span>
-            </div>
+            <img src={logoImg} alt="FinGuard" className="brand-logo-img" />
           </div>
           <button
             type="button"

@@ -57,11 +57,7 @@ export function LoginPage() {
         {/* Left Side: Student Benefits Hero */}
         <div className="auth-hero-pane">
           <div className="auth-hero-branding">
-            <img src={logoImg} alt="FinGuard Logo" className="auth-hero-logo" />
-            <div className="brand-info">
-              <span className="brand-name">FinGuard</span>
-              <span className="brand-tag">Student Finance</span>
-            </div>
+            <img src={logoImg} alt="FinGuard" className="auth-hero-logo" />
           </div>
 
           <div className="auth-hero-content">
